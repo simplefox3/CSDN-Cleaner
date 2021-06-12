@@ -3,11 +3,12 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本,目前还没找到百度搜索中链接屏蔽方式，等想到再加上XD
-// @author       Exisi
+// @author       Exisi-未默初蚀
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*
 // @grant        none
+// @supportURL   https://github.com/Exisi/CSDN-Cleaner/issues/new
 // ==/UserScript==
 
 (function() {

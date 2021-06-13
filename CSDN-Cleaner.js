@@ -7,6 +7,8 @@
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*
+// @include      *://m.baidu.com/*
+// @include      *://www.baidu.com/*
 // @grant        none
 // @supportURL   https://github.com/Exisi/CSDN-Cleaner/issues/new
 // ==/UserScript==
@@ -31,7 +33,19 @@
         }
     }
 
- 
+    if(url.match(/baidu.com/)){//清除baidu搜索界面的所有csdn下载链接
+        let noteList=document.getElementsByClassName("result c-container new-pmd");
+        if(noteList!=null){
+            for(let i in noteList){
+                const t=noteList[i].textContent;
+                if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s立即下载)|(立即下载\s\s低至)/g)>0){ //暴力检索
+                    noteList[i].style.display="none";
+                }
+            }
+        }
+    }
+
+
     /*---------------------------(*･∀･)／函数分割线＼(･∀･*)---------------------------*/
 
     function csdnItemRemove(){

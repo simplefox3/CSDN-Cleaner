@@ -38,13 +38,15 @@
         if(noteList!=null){
             for(let i in noteList){
                 const t=noteList[i].textContent;
-                if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s立即下载)|(立即下载\s\s低至)/g)>0){ //暴力检索
-                    noteList[i].style.display="none";
+                if(t!=null){
+                    if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s立即下载)|(立即下载\s\s低至)/g)>0){ //暴力检索
+                        noteList[i].style.display="none";
+                    }
                 }
             }
         }
     }
- 
+
 
     /*---------------------------(*･∀･)／函数分割线＼(･∀･*)---------------------------*/
 

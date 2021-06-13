@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.2
 // @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本
-// @author       Exisi-未默初蚀
+// @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*

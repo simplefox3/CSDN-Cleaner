@@ -14,4 +14,5 @@
 2. CSDN文章界面推荐栏的下载链接清除
 
 # 安装
-https://greasyfork.org/zh-CN/scripts/427841-csdn%E4%B8%8B%E8%BD%BD%E7%95%8C%E9%9D%A2%E6%B6%88%E9%99%A4
+ [链接]: https://greasyfork.org/zh-CN/scripts/427841-csdn%E4%B8%8B%E8%BD%BD%E7%95%8C%E9%9D%A2%E6%B6%88%E9%99%A4
+

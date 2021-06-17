@@ -8,7 +8,7 @@
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*
 // @match        *://m.baidu.com/*
-// @include      *://www.baidu.com/*
+// @match        *://www.baidu.com/*
 // @grant        none
 // @supportURL   https://github.com/Exisi/CSDN-Cleaner/issues/new
 // ==/UserScript==

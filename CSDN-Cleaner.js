@@ -1,9 +1,8 @@
 // ==UserScript==
 // @name         CSDN-Cleaner下载界面移除
 // @namespace    http://tampermonkey.net/
-// @version      0.2
-// @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本
-// @description  有关csdn下载的跳转和界面都会被移除
+// @version      0.3
+// @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本，csdn下载的跳转链接和界面都会被移除
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
@@ -19,7 +18,7 @@
     let url=window.location.href;
 
     if(url.match(/download.csdn/)){ //不予许浏览器打开csdn相关下载界面
-        csdnClose();
+        csdnClose(); //需要使用csdn下载界面可以删除
     }
 
     if(url.match(/blog.csdn/)){ //清除csdn推荐内的csdn下载链接

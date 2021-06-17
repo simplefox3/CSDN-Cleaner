@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name         csdn下载界面消除
+// @name         CSDN-Cleaner下载界面移除
 // @namespace    http://tampermonkey.net/
 // @version      0.2
 // @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本
+// @description  有关csdn下载的跳转和界面都会被移除
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*

@@ -7,7 +7,7 @@
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*
-// @include      *://m.baidu.com/*
+// @match        *://m.baidu.com/*
 // @include      *://www.baidu.com/*
 // @grant        none
 // @supportURL   https://github.com/Exisi/CSDN-Cleaner/issues/new
@@ -39,7 +39,7 @@
             for(let i in noteList){
                 const t=noteList[i].textContent;
                 if(t!=null){
-                    if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s立即下载)|(立即下载\s\s低至)/g)>0){ //暴力检索
+                    if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)/g)>0){ //暴力检索
                         noteList[i].style.display="none";
                     }
                 }

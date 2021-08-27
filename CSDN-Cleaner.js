@@ -2,7 +2,7 @@
 // @name         CSDN-Cleaner
 // @namespace    http://tampermonkey.net/
 // @version      0.4
-// @description  进入CSDN下载界面自动关闭 2. CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果
+// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*

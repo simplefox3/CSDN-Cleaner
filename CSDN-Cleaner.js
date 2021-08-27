@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         CSDN-Cleaner下载界面移除
+// @name         CSDN-Cleaner
 // @namespace    http://tampermonkey.net/
-// @version      0.3
-// @description  找代码每次不小心点进csdn下载就很烦，所以写了这个脚本，csdn下载的跳转链接和界面都会被移除
+// @version      0.4
+// @description  进入CSDN下载界面自动关闭 2. CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
@@ -39,7 +39,7 @@
             for(let i in noteList){
                 const t=noteList[i].textContent;
                 if(t!=null){
-                    if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)/g)>0){ //暴力检索
+                    if(t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)/g)>0){ //暴力检索
                         noteList[i].style.display="none";
                     }
                 }

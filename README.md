@@ -1,6 +1,6 @@
 # CSDN-Cleaner
 ## 前言
-油猴脚本 | TamperMonkey | CSDN下载页面清除
+油猴脚本 | TamperMonkey | CSDN下载页面移除 | 百度搜索结果优化
 
 * 进入CSDN下载界面自动关闭
 * CSDN文章界面下推荐中有关csdn下载的链接清除

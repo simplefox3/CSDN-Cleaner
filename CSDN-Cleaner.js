@@ -28,7 +28,10 @@
         let itemList = document.getElementsByClassName("recommend-item-box type_download clearfix");
         if (itemList != null) {
             for (let i in itemList) {
-                itemList[i].style.display = "none";
+                if (itemList[i].style != null) {
+                    itemList[i].style.display = "none";
+                }
+
             }
         }
     }
@@ -61,29 +64,25 @@
 
     /*---------------------------(*･∀･)／函数分割线＼(･∀･*)---------------------------*/
     function sameBlogRemove(nodeList, textList) {
-        try {
-            for (let i in textList) {
-                for (let j in textList) {
-                    if (i != j) {
-                        if (compare(textList[i], textList[j])) {
-                            let key = nodeList[i].textContent.search("CSDN技术社区") > 0 ? i : j; //优先干掉csdn（￣へ￣）
-                            // console.log("csdn?:key:===>"+key+"item:"+i);
-                            textList[key] = ""; //清空移除的搜索结果
-                            nodeList[key].style.display = "none"; 
-                            continue;
-                        }
+        for (let i in textList) {
+            for (let j in textList) {
+                if (i != j) {
+                    if (compare(textList[i], textList[j])) {
+                        let key = nodeList[i].textContent.search(/CSDN技术社区/g) > 0 ? i : j; //优先干掉csdn（￣へ￣）
+                        // console.log("csdn?:key:===>"+key+"item:"+i);
+                        textList[key] = ""; //清空移除的搜索结果
+                        nodeList[key].style.display = "none";
+                        continue;
                     }
                 }
             }
-        } catch (error) {
-            // console.log(error);//search()参数为空的报错，问题不大忽略
         }
     }
 
     function compare(str1, str2) { //寻找相同字符 
         if (str1 == str2) return true; //完全匹配
 
-        if (str1.search(str2.slice(1)) > 0) { //残缺匹配
+        if (str1.indexOf(str2.slice(1)) > 0) { //残缺匹配
             return true;
         } else {
             return false;

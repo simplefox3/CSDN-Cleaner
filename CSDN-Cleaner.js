@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      0.6
-// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重
+// @version      0.7
+// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
@@ -33,6 +33,11 @@
                 }
 
             }
+        }
+
+        let table_node = document.getElementsByClassName("table-box");
+        if (table_node[0] != null) {
+            reRormatTable(table_node); //加入表格格式绘制按钮，用于复制到word或笔记
         }
     }
 
@@ -102,6 +107,49 @@
         }
     }
 
+    function reRormatTable(table_node) {
+        for (let i in table_node) {
+            if (table_node[i] != null) {
+                //查看按钮
+                var btn = document.createElement("input");
+                btn.setAttribute("type", "button");
+                btn.setAttribute("value", "获取表格");
+                btn.setAttribute("class", "btn_table");
+                btn.style.background = "black";
+                btn.style.marginTop = "5px";
+                btn.style.color = "white";
+                btn.style.padding = "5px";
+                btn.style.fontWeight = "600";
+                btn.style.borderRadius = "5px";
+                btn.addEventListener("click", function () {
+                    let table = table_node[i].innerHTML;
+                    window.document.write(table); //只显示表格
+                    document.getElementsByClassName("btn_table")[0].style.display = "none";
+                    //绘制表头
+                    let title = document.getElementsByTagName("tr")[0].getElementsByTagName("td");
+                    for (const i in title) {
+                        if (title[i].style != null) {
+                            title[i].style.backgroundColor = "black";
+                            title[i].style.color = "white";
+                        }
+                    }
+                    //奇数表格显色
+                    let item = document.getElementsByTagName("tr");
+                    for (let t in item) {
+                        if (t > 0 && t % 2 != 0) {
+                            let second_item = item[t].getElementsByTagName("td");
+                            for (const j in second_item) {
+                                if (second_item[j].style != null) {
+                                    second_item[j].style.backgroundColor = "#e7e6e6";
+                                }
+                            }
+                        }
+                    }
+                })
+                table_node[i].appendChild(btn);
+            }
+        }
+    }
 
     function csdnClose() {
         if (window.history.length > 1) { //当前标签页打开后退

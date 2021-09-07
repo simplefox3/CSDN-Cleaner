@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
 // @author       Exisi
 // @match        https://download.csdn.net/*
@@ -30,7 +30,6 @@
                 if (itemList[i].style != null) {
                     itemList[i].style.display = "none";
                 }
-
             }
         }
 
@@ -46,10 +45,8 @@
         if (nodeList != null) {
             for (let i in nodeList) {
                 const t = nodeList[i].textContent;
-                if (t != null) {
-                    if (t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)/g) > 0) { //暴力检索
-                        nodeList[i].style.display = "none";
-                    }
+                if (t != null && t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)|(次\s+身份认)/g) > 0) { //暴力检索
+                    nodeList[i].style.display = "none";
                 }
                 if (nodeList[i].nodeType == 1) {
                     let itemNode = nodeList[i].getElementsByClassName("c-abstract")[0];
@@ -70,20 +67,18 @@
     function sameBlogRemove(nodeList, textList) {
         for (let i in textList) {
             for (let j in textList) {
-                if (i != j) {
-                    if (compare(textList[i], textList[j])) {
-                        let key = nodeList[i].textContent.search(/CSDN技术社区/g) > 0 ? i : j; //优先干掉csdn（￣へ￣）
-                        // console.log("csdn?:key:===>"+key+"item:"+i);
-                        textList[key] = ""; //清空移除的搜索结果
-                        nodeList[key].style.display = "none";
-                        continue;
-                    }
+                if (i != j && compare(textList[i], textList[j])) {
+                    let key = nodeList[i].textContent.search(/CSDN技术社区/g) > 0 ? i : j; //优先干掉csdn（￣へ￣）
+                    // console.log("csdn?:key:===>"+key+"item:"+i);
+                    textList[key] = ""; //清空移除的搜索结果
+                    nodeList[key].style.display = "none";
+                    continue;
                 }
             }
         }
     }
 
-    function compare(str1, str2) { //寻找相同字符 
+    function compare(str1, str2) { //寻找相同字符
         if (str1 == str2) return true; //完全匹配
 
         if (str1.indexOf(str2.slice(1)) > 0) { //残缺匹配

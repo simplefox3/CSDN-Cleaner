@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      0.9
+// @version      1.0
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
 // @author       Exisi
 // @match        https://download.csdn.net/*
@@ -103,7 +103,7 @@
 
     function reRormatTable(table_node) {
         for (let i in table_node) {
-            if (table_node[i] != null && table_node[i].nodeType!=null) {
+            if (table_node[i] != null && table_node[i].nodeType != null) {
                 //查看按钮
                 var btn = document.createElement("input");
                 btn.setAttribute("type", "button");
@@ -115,28 +115,57 @@
                 btn.style.padding = "6px";
                 btn.style.fontWeight = "600";
                 btn.style.borderRadius = "4px";
-                btn.style.fontSize="14px";
+                btn.style.fontSize = "14px";
                 btn.addEventListener("click", function () {
                     let table_content = table_node[i].innerHTML;
                     window.document.write(table_content); //只显示表格
                     document.getElementsByClassName("btn_table")[0].style.display = "none";
 
-                    //绘制表头
-                    let title = document.getElementsByTagName("tr")[0].getElementsByTagName("td");
-                    for (const i in title) {
-                        if (title[i].style != null) {
-                            title[i].style.backgroundColor = "black";
-                            title[i].style.color = "white";
+                    document.getElementsByTagName("table")[0].style.border = "1px solid #000";
+                    document.getElementsByTagName("table")[0].style.borderCollapse = "collapse";
+                    //绘制title
+                    let title = document.getElementsByTagName("tr")[0];
+                    if (title.style != null) {
+                        title.style.backgroundColor = "black";
+                        title.style.color = "white";
+
+                        let title_th = title.getElementsByTagName("th");
+                        if (title_th != null) {
+                            for (const i in title_th) {
+                                if (title_th[i].style != null) {
+                                    title_th[i].style.border = "solid #ccc 1px"; //强制绘制边框
+                                }
+                            }
+                        }
+
+                        let title_td = title.getElementsByTagName("td");
+                        if (title_td != null) {
+                            for (const i in title_td) {
+                                if (title_td[i].style != null) {
+                                    title_td[i].style.backgroundColor = "black";
+                                    title_td[i].style.color = "white";
+                                    title_td[i].style.border = "solid #ccc 1px"; //强制绘制边框
+                                }
+                            }
                         }
                     }
-                    //奇数表格显色
+
+                    //绘制item
                     let item = document.getElementsByTagName("tr");
                     for (let t in item) {
-                        if (t > 0 && t % 2 != 0) {
-                            let second_item = item[t].getElementsByTagName("td");
-                            for (const j in second_item) {
-                                if (second_item[j].style != null) {
-                                    second_item[j].style.backgroundColor = "#e7e6e6";
+                        if (item[t] != null && item[t].nodeType != null) {
+                            let all_item = item[t].getElementsByTagName("td");
+                            for (const j in all_item) {
+                                if (all_item[j].style != null) {
+                                    all_item[j].style.border = "solid #ccc 1px"; //强制绘制边框
+                                }
+                            }
+                            if (t > 0 && t % 2 == 0) {
+                                let second_item = item[t].getElementsByTagName("td");
+                                for (const j in second_item) {
+                                    if (second_item[j].style != null) {
+                                        second_item[j].style.backgroundColor = "#e7e6e6"; //奇数表格显色
+                                    }
                                 }
                             }
                         }

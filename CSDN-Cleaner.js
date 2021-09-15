@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.9
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
 // @author       Exisi
 // @match        https://download.csdn.net/*
@@ -103,7 +103,7 @@
 
     function reRormatTable(table_node) {
         for (let i in table_node) {
-            if (table_node[i] != null) {
+            if (table_node[i] != null && table_node[i].nodeType!=null) {
                 //查看按钮
                 var btn = document.createElement("input");
                 btn.setAttribute("type", "button");
@@ -112,13 +112,15 @@
                 btn.style.background = "black";
                 btn.style.marginTop = "5px";
                 btn.style.color = "white";
-                btn.style.padding = "5px";
+                btn.style.padding = "6px";
                 btn.style.fontWeight = "600";
-                btn.style.borderRadius = "5px";
+                btn.style.borderRadius = "4px";
+                btn.style.fontSize="14px";
                 btn.addEventListener("click", function () {
-                    let table = table_node[i].innerHTML;
-                    window.document.write(table); //只显示表格
+                    let table_content = table_node[i].innerHTML;
+                    window.document.write(table_content); //只显示表格
                     document.getElementsByClassName("btn_table")[0].style.display = "none";
+
                     //绘制表头
                     let title = document.getElementsByTagName("tr")[0].getElementsByTagName("td");
                     for (const i in title) {

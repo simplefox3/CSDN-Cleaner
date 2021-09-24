@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
 // @author       Exisi
 // @match        https://download.csdn.net/*
@@ -39,16 +39,20 @@
         }
     }
 
-    if (url.match(/baidu.com/)) { //清除baidu搜索界面的所有csdn下载链接
+    if (url.match(/baidu.com/)) {
         let nodeList = document.getElementsByClassName("result c-container new-pmd");
         let textList = [];
+        let model = 0;
         if (nodeList != null) {
             for (let i in nodeList) {
                 const t = nodeList[i].textContent;
-                if (t != null && t.search(/(CSDN下载是一个提供学习资源)|(下载资源请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)|(次\s+身份认)/g) > 0) { //暴力检索
-                    nodeList[i].style.display = "none";
+                if (t != null && t.search(/(CSDN下载是一个提供学习资源)|(请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)|(次\s+身份认)/g) > 0) { //暴力检索
+                    nodeList[i].style.display = "none"; //清除baidu搜索界面的所有csdn下载链接
                 }
-                if (nodeList[i].nodeType == 1) {
+                if (t != null && t.search(/(百度文库)|(百度题库)/g) > 0) {
+                    model = 1; //搜题模式下不去重
+                }
+                if (model == 0 && nodeList[i].nodeType == 1) {
                     let itemNode = nodeList[i].getElementsByClassName("c-abstract")[0];
                     if (itemNode != null) {
                         let text = itemNode.textContent;
@@ -58,7 +62,9 @@
                     }
                 }
             }
-            sameBlogRemove(nodeList, textList); //清除baidu搜索所有可能重复的结果
+            if (model == 0) {
+                sameBlogRemove(nodeList, textList); //清除baidu搜索所有可能重复的结果
+            }
         }
     }
 

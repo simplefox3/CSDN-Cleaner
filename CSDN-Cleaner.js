@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      1.3
-// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱
+// @version      1.4
+// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱 6.防百度预加载干扰
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
@@ -34,6 +34,7 @@
     }
 
     if (url.match(/baidu.com/)) {
+        baiduDiabledPreload();
         let textList = [];
         let model = baiduSearchModel();
         let nodeList = document.getElementsByClassName("result c-container new-pmd");
@@ -53,6 +54,22 @@
 
 
     /*---------------------------(*･∀･)／函数分割线＼(･∀･*)---------------------------*/
+
+
+    function baiduDiabledPreload() {
+        let page_btn = document.getElementsByClassName("page-inner_2jZi2")[0].getElementsByTagName("a");
+        if (page_btn != null) {
+            for (let i in page_btn) {
+                if (page_btn[i]!= null) {
+                    page_btn[i].onclick = function () {
+                        setTimeout("location.reload()", 100);
+                    }
+                }
+            }
+        }
+    }
+
+
     function baiduSearchModel() {
         let content = document.getElementsByClassName("f13 c-gap-top-xsmall se_st_footer user-avatar");
         let model = 0;

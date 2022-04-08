@@ -1,6 +1,6 @@
 # CSDN-Cleaner
 ## 前言
-油猴脚本 | TamperMonkey | CSDN下载页面移除 | 百度搜索结果优化
+百度搜索的CSDN结果过于泛滥，此脚本主要针对CSDN的内容进行处理，尽可能的改善搜索体验
 
 * 进入CSDN下载界面自动关闭
 * CSDN文章界面下推荐中有关csdn下载的链接清除

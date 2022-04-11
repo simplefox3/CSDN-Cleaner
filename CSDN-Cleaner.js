@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      1.8
-// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱 6.防百度预加载干扰
+// @version      1.9
+// @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.对 CSDN 文章原创 / 转载突出标识 6.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱 7.防百度预加载干扰
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
@@ -14,13 +14,30 @@
 
 (function () {
     let url = window.location.href;
-
-    if (url.match(/download.csdn/)) csdnClose(); //需要使用csdn下载界面可以删除
-
-    if (url.match(/blog.csdn/)) { //清除csdn推荐内的csdn下载链接
-        window.onload = function () {
-            csdnItemRemove(); //防js诈尸
+    //需要使用csdn下载界面可以删除
+    if (url.match(/download.csdn/)) csdnClose();
+    //清除csdn推荐内的csdn下载链接
+    if (url.match(/blog.csdn/)) {
+        //重新标识原创和转载标签
+        let copyright = document.getElementsByClassName("article-copyright")[0] ? 1 : 0;
+        let tagNode = document.getElementsByClassName("article-bar-top")[0];
+        if (tagNode != null) {
+            console.log("hahhaha" + copyright);
+            if (copyright == 1) {
+                let tag = tagNode.getElementsByClassName("article-type-img")[0];
+                if (tag != null) tag.style.display = "none";
+                tagNode.innerHTML += "<div id='test' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid red;transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;'><button style='background:none;color:red;transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>原创</button></div>";
+            } else {
+                let tag = tagNode.getElementsByClassName("article-type-img")[0];
+                if (tag != null) tag.style.display = "none";
+                tagNode.innerHTML += "<div id='test' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid red;transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;'><button style='background:none;color:red;transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>转载</button></div>";
+            }
         }
+        //防csdn下载js再次加入
+        window.onload = function () {
+            csdnItemRemove();
+        }
+        //删除底部文章推荐中的 csdn下载
         let itemList = document.getElementsByClassName("recommend-item-box type_download clearfix");
         if (itemList != null) {
             for (let i in itemList) {
@@ -29,8 +46,10 @@
                 }
             }
         }
+        //获取表格节点
         let table_node = document.getElementsByClassName("table-box");
-        if (table_node[0] != null) reRormatTable(table_node); //加入表格格式绘制按钮，用于复制到word或笔记
+        //加入表格格式绘制按钮，用于复制到word或笔记
+        if (table_node[0] != null) reRormatTable(table_node);
     }
 
     if (url.match(/baidu.com/)) {
@@ -43,12 +62,14 @@
             for (let i in nodeList) {
                 const t = nodeList[i].textContent;
                 if (t != null && t.search(/(CSDN下载是一个提供学习资源)|(请访问CSDN下载)|(C币\s+立即)|(立即下载\s+低至)|(csdn已为您找到关于)|(次\s+身份认)|(积分\/\C币)/g) > 0) { //暴力检索
-                    nodeList[i].style.display = "none"; //清除baidu搜索界面的所有csdn下载链接
+                    //清除baidu搜索界面的所有csdn下载链接
+                    nodeList[i].style.display = "none";
                 }
                 let text = getNodeText(model, nodeList[i]);
                 if (text != null) textList.push(text);
             }
-            if (model > 0) sameBlogRemove(nodeList, textList); //清除baidu搜索所有可能重复的结果
+            //清除baidu搜索所有可能重复的结果
+            if (model > 0) sameBlogRemove(nodeList, textList);
         }
     }
 
@@ -56,6 +77,7 @@
     /*---------------------------(*･∀･)／函数分割线＼(･∀･*)---------------------------*/
 
 
+    //取消百度的预加载
     function baiduDiabledPreload() {
         let page_btn = document.getElementsByClassName("page-inner_2jZi2")[0].getElementsByTagName("a");
         if (page_btn != null) {
@@ -75,7 +97,7 @@
         }
     }
 
-
+    //在搜题的情况下对搜索结果不进行处理
     function baiduSearchModel() {
         let content = document.getElementsByClassName("f13 c-gap-top-xsmall se_st_footer user-avatar");
         let model = 0;
@@ -91,7 +113,7 @@
             return model; //搜题0 , 默认1
         }
     }
-
+    //获取每个搜索结果的文本
     function getNodeText(model, node) {
         if (model > 0 && node.nodeType == 1) {
             let itemNode = node.getElementsByClassName("c-abstract")[0];
@@ -103,13 +125,15 @@
         }
     }
 
+    //对重复的博客进行去除
     function sameBlogRemove(nodeList, textList) {
         for (let i in textList) {
             for (let j in textList) {
                 if (i != j && compare(textList[i], textList[j])) {
                     let key = nodeList[i].textContent.search(/CSDN技术社区/g) > 0 ? i : j; //优先干掉csdn（￣へ￣）
                     // console.log("csdn?:key:===>"+key+"item:"+i);
-                    textList[key] = ""; //清空移除的搜索结果
+                    //清空移除的搜索结果
+                    textList[key] = "";
                     nodeList[key].style.display = "none";
                     continue;
                 }
@@ -117,16 +141,19 @@
         }
     }
 
-    function compare(str1, str2) { //寻找相同字符
-        if (str1 == str2) return true; //完全匹配
-        if (str1.indexOf(str2.slice(1)) > 0) { //残缺匹配
+    //寻找相同字符
+    function compare(str1, str2) {
+        //完全匹配
+        if (str1 == str2) return true;
+        //残缺匹配
+        if (str1.indexOf(str2.slice(1)) > 0) {
             return true;
         } else {
             return false;
         }
     }
 
-
+    //移除推荐文章中的csdn下载
     function csdnItemRemove() {
         let errorItemList = document.getElementsByClassName("recommend-item-box baiduSearch clearfix");
         if (errorItemList != null) {
@@ -139,6 +166,7 @@
         }
     }
 
+    //表格格式化
     function reRormatTable(table_node) {
         for (let i in table_node) {
             if (table_node[i] != null && table_node[i].nodeType != null) {
@@ -161,7 +189,7 @@
 
                     document.getElementsByTagName("table")[0].style.border = "1px solid #000";
                     document.getElementsByTagName("table")[0].style.borderCollapse = "collapse";
-                    //绘制title
+                    //绘制表头
                     let title = document.getElementsByTagName("tr")[0];
                     if (title.style != null) {
                         title.style.backgroundColor = "black";
@@ -187,8 +215,7 @@
                             }
                         }
                     }
-
-                    //绘制item
+                    //绘制行
                     let item = document.getElementsByTagName("tr");
                     for (let t in item) {
                         if (item[t] != null && item[t].nodeType != null) {
@@ -214,10 +241,13 @@
         }
     }
 
+    //关闭csdn下载界面
     function csdnClose() {
-        if (window.history.length > 1) { //当前标签页打开后退
+        if (window.history.length > 1) {
+            //当前标签页打开后退
             window.history.back();
-        } else { //新标签页打开直接关闭
+        } else {
+            //新标签页打开直接关闭
             window.close();
         }
     }

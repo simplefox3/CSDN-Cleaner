@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      2.0
+// @version      2.1
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.对 CSDN 文章原创 / 转载突出标识 6.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱 7.防百度预加载干扰
 // @author       Exisi
 // @match        https://download.csdn.net/*
@@ -238,22 +238,23 @@
     //替换文章标签
     function csdnCreateNewTag(tagNode, type, color) {
         let tag = tagNode.getElementsByClassName("article-type-img")[0];
-        let preTag = tagNode.getElementsByClassName("bar-content")[0];
+        let preTag = document.getElementsByClassName("blog-tags-box")[0];
         if (tag != null && preTag != null) {
             tag.style.display = "none";
             let newTag = document.createElement("div");
-            newTag.innerHTML += "<div id='taga_content' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid " + color + ";transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;margin-right:10px;margin-left:-15px;'><button id='new_tag' style='background:none;color:" + color + ";transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>" + type + "</button></div>";
+            newTag.innerHTML += "<div id='taga_content' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid " + color + ";transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;margin-right:20px;margin-left:-25px;'><button id='new_tag' style='background:none;color:" + color + ";transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>" + type + "</button></div>";
             preTag.prepend(newTag);
-
+            let nextTagContent = document.getElementsByClassName("tags-box artic-tag-box")[0];
+            if (nextTagContent != null) nextTagContent.style.paddingTop = "6px";
             let btn_tag = document.getElementById("new_tag");
             btn_tag.addEventListener("click", function () {
                 let link = document.createElement("a");
-                link.setAttribute("href","#pcCommentBox");
-                    link.click();
+                link.setAttribute("href", "#pcCommentBox");
+                link.click();
             });
         }
     }
-    
+
     //关闭csdn下载界面
     function csdnClose() {
         if (window.history.length > 1) {

@@ -1,42 +1,35 @@
 // ==UserScript==
 // @name         CSDN-Cleaner|下载页面移除|百度搜索csdn结果优化
 // @namespace    http://tampermonkey.net/
-// @version      1.9
+// @version      2.0
 // @description  1.进入CSDN下载界面自动关闭 2.CSDN博客文章界面下推荐中有关csdn下载的链接清除 3.百度搜索界面清除CSDN下载和聚合内容的搜索结果 4.百度界面搜索结果/相同文章去重 5.对 CSDN 文章原创 / 转载突出标识 6.增加界面表格获取按钮，对csdn博客中的表格进行获取重绘，复制格式不混乱 7.防百度预加载干扰
 // @author       Exisi
 // @match        https://download.csdn.net/*
 // @match        http://download.csdn.net/*
 // @match        https://blog.csdn.net/*
+// @match        *.blog.csdn.net/article/*
 // @match        *://www.baidu.com/s*
-// @grant        none
 // @supportURL   https://github.com/Exisi/CSDN-Cleaner/issues/new
 // ==/UserScript==
 
 (function () {
     let url = window.location.href;
-    //需要使用csdn下载界面可以删除
-    if (url.match(/download.csdn/)) csdnClose();
-    //清除csdn推荐内的csdn下载链接
+    if (url.match(/download.csdn/)) csdnClose(); //需要使用csdn下载界面可以删除
     if (url.match(/blog.csdn/)) {
         //重新标识原创和转载标签
         let copyright = document.getElementsByClassName("article-copyright")[0] ? 1 : 0;
         let tagNode = document.getElementsByClassName("article-bar-top")[0];
         if (tagNode != null) {
-            console.log("hahhaha" + copyright);
             if (copyright == 1) {
-                let tag = tagNode.getElementsByClassName("article-type-img")[0];
-                if (tag != null) tag.style.display = "none";
-                tagNode.innerHTML += "<div id='test' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid red;transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;'><button style='background:none;color:red;transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>原创</button></div>";
+                csdnCreateNewTag(tagNode, "原创", "red");
             } else {
-                let tag = tagNode.getElementsByClassName("article-type-img")[0];
-                if (tag != null) tag.style.display = "none";
-                tagNode.innerHTML += "<div id='test' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid red;transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;'><button style='background:none;color:red;transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>转载</button></div>";
+                csdnCreateNewTag(tagNode, "转载", "green");
             }
         }
-        //防csdn下载js再次加入
-        window.onload = function () {
-            csdnItemRemove();
-        }
+        //获取表格节点
+        let table_node = document.getElementsByClassName("table-box");
+        //加入表格格式绘制按钮，用于复制到word或笔记
+        if (table_node[0] != null) reRormatTable(table_node);
         //删除底部文章推荐中的 csdn下载
         let itemList = document.getElementsByClassName("recommend-item-box type_download clearfix");
         if (itemList != null) {
@@ -46,10 +39,10 @@
                 }
             }
         }
-        //获取表格节点
-        let table_node = document.getElementsByClassName("table-box");
-        //加入表格格式绘制按钮，用于复制到word或笔记
-        if (table_node[0] != null) reRormatTable(table_node);
+        //防csdn下载js再次加入
+        window.onload = function () {
+            csdnItemRemove();
+        }
     }
 
     if (url.match(/baidu.com/)) {
@@ -113,6 +106,7 @@
             return model; //搜题0 , 默认1
         }
     }
+
     //获取每个搜索结果的文本
     function getNodeText(model, node) {
         if (model > 0 && node.nodeType == 1) {
@@ -241,6 +235,25 @@
         }
     }
 
+    //替换文章标签
+    function csdnCreateNewTag(tagNode, type, color) {
+        let tag = tagNode.getElementsByClassName("article-type-img")[0];
+        let preTag = tagNode.getElementsByClassName("bar-content")[0];
+        if (tag != null && preTag != null) {
+            tag.style.display = "none";
+            let newTag = document.createElement("div");
+            newTag.innerHTML += "<div id='taga_content' style='background:white;height:35px;width:35px;border-radius:5px;border:1px solid " + color + ";transform: rotate(-45deg);display:flex;justify-content:center;align-items:center;margin-right:10px;margin-left:-15px;'><button id='new_tag' style='background:none;color:" + color + ";transform:rotate(45deg);text-align: center;display: inline-block;font-size:12px;padding:2px;'>" + type + "</button></div>";
+            preTag.prepend(newTag);
+
+            let btn_tag = document.getElementById("new_tag");
+            btn_tag.addEventListener("click", function () {
+                let link = document.createElement("a");
+                link.setAttribute("href","#pcCommentBox");
+                    link.click();
+            });
+        }
+    }
+    
     //关闭csdn下载界面
     function csdnClose() {
         if (window.history.length > 1) {
